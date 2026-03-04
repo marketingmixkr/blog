@@ -125,26 +125,24 @@ function blogCard(p) {
   </div>`;
 }
 
-// ── Blog Modal (블로그 포스팅 스타일) ──
+// ── Blog Modal (장문 포스팅 스타일) ──
 function openBlogModal(id) {
   const post = MM_DATA.posts.find(p => p.id === id);
   if(!post) return;
   const cfg = BLOG_CAT_CONFIG[post.category] || { icon:'📌', color:'#94a3b8', bg:'rgba(148,163,184,0.08)' };
   const m = document.getElementById('blogModal');
 
-  // 카테고리별 헤더 색상 강조
   m.querySelector('.modal-body').innerHTML = `
-    <div class="blog-post-hero" style="background:linear-gradient(160deg,${cfg.bg} 0%,transparent 60%);padding:0;">
-      <img src="${post.thumbnail}" style="width:100%;height:260px;object-fit:cover;border-radius:20px 20px 0 0;display:block;" alt="" onerror="this.style.display='none';">
-    </div>
-    <div class="blog-post-content">
+    ${post.thumbnail ? `<img class="blog-post-hero-img" src="${post.thumbnail}" alt="${post.title}" onerror="this.style.display='none';">` : ''}
+    <div class="blog-post-color-bar" style="--post-color:${cfg.color};"></div>
+    <div class="blog-post-content" style="--post-color:${cfg.color};">
       <div class="blog-post-meta-row">
         <span class="blog-post-cat" style="background:${cfg.bg};color:${cfg.color};border:1px solid ${cfg.color}30;">${cfg.icon} ${post.category}</span>
         <span class="blog-post-date">📅 ${post.date}</span>
         <span class="blog-post-views">👁 ${post.views}</span>
       </div>
       <h1 class="blog-post-title">${post.title}</h1>
-      <div class="blog-post-divider"></div>
+      <div class="blog-post-divider" style="--post-color:${cfg.color};"></div>
       <div class="blog-post-body">${formatPostContent(post.content)}</div>
       ${post.tags && post.tags.length ? `
       <div class="blog-post-tags">
@@ -152,18 +150,86 @@ function openBlogModal(id) {
       </div>` : ''}
     </div>`;
 
+  // 스크롤 맨 위로
+  const scroll = m.querySelector('.blog-post-scroll');
+  if(scroll) scroll.scrollTop = 0;
   m.classList.add('open');
 }
 
-// 포스트 내용 포맷 - 줄바꿈 처리 및 단락 분리
+// 포스트 내용 파싱 - 마크다운 서브셋 지원
 function formatPostContent(text) {
   if(!text) return '';
-  // 빈 줄 기준으로 문단 분리
-  const paragraphs = text.split(/\n\n+/);
-  return paragraphs.map(p => {
-    const lines = p.split('\n').join('<br>');
-    return `<p>${lines}</p>`;
-  }).join('');
+  const lines = text.split('\n');
+  let html = '';
+  let inList = false;
+  let listType = '';
+
+  for(let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+
+    // 빈 줄 → 단락 구분
+    if(line.trim() === '') {
+      if(inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; listType = ''; }
+      continue;
+    }
+
+    // ## 제목2
+    if(line.startsWith('## ')) {
+      if(inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; }
+      html += `<h2>${inlineFormat(line.slice(3))}</h2>`;
+      continue;
+    }
+    // ### 제목3
+    if(line.startsWith('### ')) {
+      if(inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; }
+      html += `<h3>${inlineFormat(line.slice(4))}</h3>`;
+      continue;
+    }
+    // > 인용구
+    if(line.startsWith('> ')) {
+      if(inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; }
+      html += `<blockquote>${inlineFormat(line.slice(2))}</blockquote>`;
+      continue;
+    }
+    // --- 구분선
+    if(/^-{3,}$/.test(line.trim())) {
+      html += '<hr>';
+      continue;
+    }
+    // - 불릿 리스트
+    if(line.startsWith('- ') || line.startsWith('* ')) {
+      if(!inList || listType !== 'ul') {
+        if(inList) html += listType === 'ol' ? '</ol>' : '</ul>';
+        html += '<ul>'; inList = true; listType = 'ul';
+      }
+      html += `<li>${inlineFormat(line.slice(2))}</li>`;
+      continue;
+    }
+    // 1. 번호 리스트
+    if(/^\d+\.\s/.test(line)) {
+      if(!inList || listType !== 'ol') {
+        if(inList) html += listType === 'ul' ? '</ul>' : '</ol>';
+        html += '<ol>'; inList = true; listType = 'ol';
+      }
+      html += `<li>${inlineFormat(line.replace(/^\d+\.\s/, ''))}</li>`;
+      continue;
+    }
+
+    // 일반 단락
+    if(inList) { html += listType === 'ul' ? '</ul>' : '</ol>'; inList = false; listType = ''; }
+    html += `<p>${inlineFormat(line)}</p>`;
+  }
+
+  if(inList) html += listType === 'ul' ? '</ul>' : '</ol>';
+  return html;
+}
+
+// 인라인 마크다운 파싱 (**bold**, *em*, `code`)
+function inlineFormat(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`(.+?)`/g, '<code>$1</code>');
 }
 
 function closeBlogModal() { document.getElementById('blogModal')?.classList.remove('open'); }
@@ -346,106 +412,145 @@ function closePfModal() { document.getElementById('pfModal')?.classList.remove('
 function openBuyModal(id) {
   const p = MM_DATA.portfolio.find(x => x.id === id);
   if(!p) return;
-  const tags = (p.tags||[]);
+  const tags  = (p.tags || []);
   const price = p.price || '-';
 
-  const tagOptions = tags.map(t =>
-    `<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.85rem;color:var(--text2);">
-      <input type="checkbox" name="buy_tag" value="${t}" checked style="accent-color:var(--aurora-1);">${t}
-    </label>`
-  ).join('');
-
   document.getElementById('buyModalBody').innerHTML = `
-    <div style="padding:32px;">
-      <div style="text-align:center;margin-bottom:24px;">
-        <div style="font-size:1.8rem;margin-bottom:8px;">🛒</div>
-        <h2 style="font-size:1.2rem;font-weight:800;color:var(--text);">구매 문의</h2>
-        <p style="font-size:0.8rem;color:var(--text3);margin-top:4px;">${p.name}</p>
+    <div style="padding:32px 28px;">
+      <div style="text-align:center;margin-bottom:28px;">
+        <div style="font-size:2rem;margin-bottom:8px;">🛒</div>
+        <h2 style="font-size:1.15rem;font-weight:900;color:var(--text);margin-bottom:4px;">구매 문의</h2>
+        <p style="font-size:0.8rem;color:var(--text3);padding:6px 14px;background:rgba(0,245,200,0.06);border:1px solid rgba(0,245,200,0.15);border-radius:8px;display:inline-block;">${p.name}</p>
       </div>
-      <form id="buyForm">
-        <input type="hidden" id="buy_project_name" value="${p.name}">
-        <input type="hidden" id="buy_project_price" value="${price}">
-        <div class="form-grid" style="gap:14px;">
+
+      <form id="buyForm" autocomplete="off">
+        <input type="hidden" id="buy_project_name" value="${escHtml(p.name)}">
+        <input type="hidden" id="buy_project_price" value="${escHtml(price)}">
+        <input type="hidden" id="buy_project_tags" value="${escHtml(tags.join(','))}">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+
+          <!-- 성함/회사명 -->
           <div class="form-group">
             <label class="form-label">성함 / 회사명 <span class="req">*</span></label>
             <input id="buy_name" type="text" class="form-control" placeholder="홍길동 / (주)마케팅믹스" required>
           </div>
+
+          <!-- 연락처 -->
           <div class="form-group">
             <label class="form-label">연락처 <span class="req">*</span></label>
             <input id="buy_phone" type="tel" class="form-control" placeholder="010-0000-0000" required>
           </div>
-          <div class="form-group form-col-full">
+
+          <!-- 이메일 -->
+          <div class="form-group" style="grid-column:1/-1;">
             <label class="form-label">이메일 <span class="req">*</span></label>
             <input id="buy_email" type="email" class="form-control" placeholder="example@email.com" required>
           </div>
+
+          <!-- 메신저 -->
           <div class="form-group">
             <label class="form-label">메신저 <span class="req">*</span></label>
             <select id="buy_messenger" class="form-control" required>
               <option value="">선택해 주세요</option>
-              <option>카카오톡</option>
-              <option>디스코드</option>
-              <option>텔레그램</option>
-              <option>기타</option>
+              <option value="카카오톡">카카오톡</option>
+              <option value="디스코드">디스코드</option>
+              <option value="텔레그램">텔레그램</option>
+              <option value="기타">기타</option>
             </select>
           </div>
+
+          <!-- 메신저 ID -->
           <div class="form-group">
             <label class="form-label">메신저 ID <span class="req">*</span></label>
             <input id="buy_messenger_id" type="text" class="form-control" placeholder="@username 등" required>
           </div>
-          <div class="form-group form-col-full">
+
+          <!-- 프로젝트명 (자동) -->
+          <div class="form-group" style="grid-column:1/-1;">
             <label class="form-label">프로젝트명</label>
-            <input type="text" class="form-control" value="${p.name}" readonly style="opacity:0.6;cursor:not-allowed;">
+            <input type="text" class="form-control" value="${escHtml(p.name)}" readonly
+              style="opacity:0.55;cursor:not-allowed;background:rgba(255,255,255,0.02);">
           </div>
+
+          <!-- 문의 유형 (태그 체크박스) -->
           ${tags.length ? `
-          <div class="form-group form-col-full">
+          <div class="form-group" style="grid-column:1/-1;">
             <label class="form-label">문의 유형 <span class="req">*</span></label>
-            <div style="display:flex;flex-wrap:wrap;gap:10px;padding:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;">
-              ${tagOptions}
+            <div class="buy-tag-grid">
+              ${tags.map(t => `
+              <label class="buy-tag-item">
+                <input type="checkbox" name="buy_tag" value="${escHtml(t)}" checked>
+                <span class="buy-tag-label">${t}</span>
+              </label>`).join('')}
             </div>
           </div>` : ''}
-          <div class="form-group form-col-full">
+
+          <!-- 결제 금액 (자동) -->
+          <div class="form-group" style="grid-column:1/-1;">
             <label class="form-label">결제 금액</label>
-            <input type="text" class="form-control" value="${price}" readonly style="opacity:0.6;cursor:not-allowed;">
+            <input type="text" class="form-control" value="${escHtml(price)}" readonly
+              style="opacity:0.55;cursor:not-allowed;background:rgba(255,255,255,0.02);color:var(--aurora-1);font-weight:700;">
           </div>
-          <div class="form-group form-col-full">
+
+          <!-- 문의 내용 (선택) -->
+          <div class="form-group" style="grid-column:1/-1;">
             <label class="form-label">문의 내용 <span class="opt">(선택)</span></label>
-            <textarea id="buy_content" class="form-control" rows="3" placeholder="추가 문의사항을 입력해 주세요."></textarea>
+            <textarea id="buy_content" class="form-control" rows="3"
+              placeholder="추가 문의사항이 있으면 입력해 주세요."></textarea>
           </div>
-        </div>
-        <button type="button" class="submit-btn" style="margin-top:16px;" onclick="submitBuyForm()">📨 구매 문의 접수</button>
+
+        </div><!-- /grid -->
+
+        <button type="button" class="submit-btn" id="buySubmitBtn" style="margin-top:20px;width:100%;"
+          onclick="submitBuyForm()">📨 구매 문의 접수하기</button>
       </form>
-      <div id="buySuccess" style="display:none;text-align:center;padding:32px 0;">
-        <div style="font-size:2.5rem;margin-bottom:12px;">🎉</div>
-        <div style="font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:8px;">접수 완료!</div>
-        <div style="font-size:0.85rem;color:var(--text3);">빠른 시일 내에 연락드리겠습니다.</div>
-        <button class="btn btn-outline" style="margin-top:20px;" onclick="closeBuyModal()">닫기</button>
+
+      <div id="buySuccess" style="display:none;text-align:center;padding:40px 0 20px;">
+        <div style="font-size:3rem;margin-bottom:14px;">🎉</div>
+        <div style="font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:8px;">접수 완료!</div>
+        <div style="font-size:0.85rem;color:var(--text3);line-height:1.7;">빠른 시일 내에 입력하신 연락처로 연락드리겠습니다.<br>텔레그램으로 문의 내용이 발송되었습니다.</div>
+        <button class="btn btn-outline" style="margin-top:24px;" onclick="closeBuyModal()">닫기</button>
       </div>
     </div>`;
 
-  document.getElementById('buyModal').classList.add('open');
+  // 모달 열기 및 스크롤 초기화
+  const modal = document.getElementById('buyModal');
+  modal.classList.add('open');
+  const box = modal.querySelector('.modal-box');
+  if(box) box.scrollTop = 0;
+}
+
+// 간단한 HTML 이스케이프
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
 }
 
 async function submitBuyForm() {
-  const name       = document.getElementById('buy_name').value.trim();
-  const phone      = document.getElementById('buy_phone').value.trim();
-  const email      = document.getElementById('buy_email').value.trim();
-  const messenger  = document.getElementById('buy_messenger').value;
-  const messId     = document.getElementById('buy_messenger_id').value.trim();
-  const projectName= document.getElementById('buy_project_name').value;
-  const price      = document.getElementById('buy_project_price').value;
-  const content    = document.getElementById('buy_content').value.trim();
+  const name    = document.getElementById('buy_name').value.trim();
+  const phone   = document.getElementById('buy_phone').value.trim();
+  const email   = document.getElementById('buy_email').value.trim();
+  const msn     = document.getElementById('buy_messenger').value;
+  const msnId   = document.getElementById('buy_messenger_id').value.trim();
+  const projName= document.getElementById('buy_project_name').value;
+  const price   = document.getElementById('buy_project_price').value;
+  const content = document.getElementById('buy_content').value.trim();
 
-  if(!name||!phone||!email||!messenger||!messId) {
+  if(!name || !phone || !email || !msn || !msnId) {
     alert('필수 항목을 모두 입력해 주세요.');
     return;
   }
 
   // 체크된 태그 수집
-  const checkedTags = [...document.querySelectorAll('input[name="buy_tag"]:checked')].map(el=>el.value);
-  const tagStr = checkedTags.length ? checkedTags.join(', ') : '-';
+  const checked = [...document.querySelectorAll('input[name="buy_tag"]:checked')].map(el => el.value);
+  const tagStr  = checked.length ? checked.join(', ') : '-';
 
-  const btn = document.querySelector('#buyForm .submit-btn');
-  if(btn) { btn.disabled=true; btn.textContent='전송 중...'; }
+  const btn = document.getElementById('buySubmitBtn');
+  if(btn) { btn.disabled = true; btn.textContent = '전송 중...'; }
 
   const kstNow = nowKST();
   const tgMsg =
@@ -455,9 +560,9 @@ async function submitBuyForm() {
 👤 성함/회사명 : ${name}
 📱 연락처 : ${phone}
 📧 이메일 : ${email}
-💬 메신저 : ${messenger} / 메신저 ID : ${messId}
+💬 메신저 : ${msn} / 메신저 ID : ${msnId}
 
-📌 프로젝트명 : ${projectName}
+📌 프로젝트명 : ${projName}
 📋 문의 유형 : ${tagStr}
 💰 구매 금액 : ${price}
 
@@ -473,7 +578,10 @@ ${content || '(없음)'}
   document.getElementById('buySuccess').style.display = 'block';
 }
 
-function closeBuyModal() { document.getElementById('buyModal')?.classList.remove('open'); }
+function closeBuyModal() {
+  document.getElementById('buyModal')?.classList.remove('open');
+}
+
 
 // ── Search ──
 function initSearch() {
@@ -511,6 +619,11 @@ const PLATFORM_ICONS = {
   website:   { icon:'🌐', label:'홈페이지' },
   etc:       { icon:'📌', label:'기타' },
 };
+// ↑ 플랫폼 아이콘/라벨을 바꾸려면 위 객체의 icon 값을 수정하세요.
+// key(program, naver...) 는 드롭다운 option value 와 일치해야 합니다.
+// 새 플랫폼 추가: { icon:'🆕', label:'새플랫폼' } 형태로 추가 후,
+// index.html의 <select id="pj_platform"> 에도 동일한 value의 <option> 을 추가하세요.
+
 
 const STATUS_STYLES = {
   '접수':   { color:'#64748b', bg:'rgba(100,116,139,0.12)', border:'rgba(100,116,139,0.3)' },
@@ -672,10 +785,15 @@ function renderBoard(cat) {
 let _adminOk = false;
 
 function switchAdminTab(tab, el) {
+  // 탭 버튼 active 처리
   document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('adminTabInquiry').style.display  = tab==='inquiry'  ? 'block' : 'none';
-  document.getElementById('adminTabProjects').style.display = tab==='projects' ? 'block' : 'none';
+  // 탭 컨텐츠 표시/숨김
+  const tabInquiry  = document.getElementById('adminTabInquiry');
+  const tabProjects = document.getElementById('adminTabProjects');
+  if(tabInquiry)  tabInquiry.style.display  = (tab === 'inquiry')  ? 'block' : 'none';
+  if(tabProjects) tabProjects.style.display = (tab === 'projects') ? 'block' : 'none';
+  // 프로젝트 탭 열릴 때 데이터 로드
   if(tab === 'projects') loadAdminProjects();
 }
 
