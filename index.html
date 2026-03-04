@@ -49,6 +49,118 @@
     }
     .pf-meta-item { display: flex; flex-direction: column; gap: 3px; }
     .pf-meta-item .lbl { font-size: 0.68rem; color: var(--text3); }
+
+    /* ── 블로그 카드 (썸네일 위 카테고리 뱃지) ── */
+    .blog-thumb-wrap { position: relative; overflow: hidden; }
+    .blog-thumb { width:100%; height:180px; object-fit:cover; background:var(--bg-surface); display:block; }
+    .blog-cat-badge {
+      position: absolute; top:12px; left:12px;
+      font-size:0.68rem; font-weight:700; padding:3px 10px;
+      border-radius:100px; backdrop-filter:blur(8px);
+    }
+
+    /* ── 블로그 포스트 모달 ── */
+    .blog-post-content { padding: 28px 32px 32px; }
+    .blog-post-meta-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .blog-post-cat {
+      font-size:0.7rem; font-weight:700; padding:3px 10px; border-radius:100px;
+    }
+    .blog-post-date, .blog-post-views {
+      font-size:0.75rem; color:var(--text3);
+    }
+    .blog-post-title {
+      font-size:1.45rem; font-weight:900; color:var(--text);
+      line-height:1.4; margin-bottom:16px;
+    }
+    .blog-post-divider {
+      height:1px; background:linear-gradient(90deg,var(--aurora-1),var(--aurora-2),transparent);
+      opacity:0.25; margin-bottom:22px;
+    }
+    .blog-post-body {
+      font-size:0.92rem; line-height:1.9; color:var(--text2);
+    }
+    .blog-post-body p { margin-bottom:1.1em; }
+    .blog-post-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.07); }
+    .blog-tag-chip {
+      font-size:0.75rem; padding:4px 12px; border-radius:100px;
+      background:rgba(255,255,255,0.05); color:var(--text3);
+      border:1px solid rgba(255,255,255,0.1);
+    }
+    /* 블로그 모달 넓게 */
+    #blogModal .modal-box { max-width: 680px; }
+
+    /* ── 포트폴리오 메타 박스 ── */
+    .pf-meta-item-box {
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:10px; padding:12px;
+    }
+    .pf-meta-item-lbl { font-size:0.68rem; color:var(--text3); margin-bottom:4px; }
+    .pf-meta-item-val { font-size:0.85rem; font-weight:600; color:var(--text); }
+
+    /* 구매 불가 메시지 */
+    .not-available-msg {
+      text-align:center; padding:14px 20px;
+      background:rgba(239,68,68,0.08); color:#ef4444;
+      border:1px solid rgba(239,68,68,0.2); border-radius:12px;
+      font-size:0.88rem; font-weight:700;
+    }
+
+    /* ── 프로젝트 목록 섹션 ── */
+    #projectList { position:relative; }
+    .pj-stats-row {
+      display:flex; gap:16px; margin-bottom:28px; flex-wrap:wrap;
+    }
+    .pj-stat-box {
+      flex:1; min-width:120px;
+      background:var(--bg-glass); border:1px solid rgba(0,245,200,0.1);
+      border-radius:16px; padding:20px 24px; text-align:center;
+      backdrop-filter:blur(16px);
+    }
+    .pj-stat-num {
+      font-size:2rem; font-weight:900;
+      background:linear-gradient(135deg,var(--aurora-1),var(--aurora-2));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .pj-stat-lbl { font-size:0.78rem; color:var(--text3); margin-top:4px; }
+    .pj-table-wrap {
+      background:var(--bg-glass); border:1px solid rgba(0,245,200,0.1);
+      border-radius:16px; overflow:hidden; backdrop-filter:blur(16px);
+    }
+    .pj-table { width:100%; border-collapse:collapse; }
+    .pj-table th {
+      padding:13px 18px; text-align:left;
+      font-size:0.68rem; font-weight:700; color:var(--text3);
+      background:rgba(0,245,200,0.04);
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      text-transform:uppercase; letter-spacing:1px;
+    }
+    .pj-table td {
+      padding:13px 18px; font-size:0.82rem;
+      border-bottom:1px solid rgba(255,255,255,0.05);
+      color:var(--text2);
+    }
+    .pj-table tr:last-child td { border-bottom:none; }
+    .pj-table tr:hover td { background:rgba(0,245,200,0.02); }
+
+    /* ── 관리자 탭 ── */
+    .admin-tabs {
+      display:flex; gap:4px; margin-bottom:24px;
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.07);
+      border-radius:12px; padding:4px; width:fit-content;
+    }
+    .admin-tab-btn {
+      padding:8px 20px; border-radius:9px; font-size:0.82rem;
+      font-weight:600; background:transparent; color:var(--text3);
+      border:none; cursor:pointer; transition:all 0.2s;
+    }
+    .admin-tab-btn.active {
+      background:rgba(0,245,200,0.12); color:var(--aurora-1);
+      border:1px solid rgba(0,245,200,0.2);
+    }
+    .admin-tab-btn:hover:not(.active) { color:var(--text2); background:rgba(255,255,255,0.04); }
     .pf-meta-item .val { font-size: 0.82rem; font-weight: 600; color: var(--text); }
   </style>
 </head>
@@ -247,25 +359,7 @@
           <button class="filter-btn pf-cat-btn" data-cat="랜딩페이지">🚀 랜딩페이지</button>
           <button class="filter-btn pf-cat-btn" data-cat="기타">📌 기타</button>
         </div>
-        <div class="filter-group">
-          <span class="filter-label">태그</span>
-          <button class="filter-btn pf-tag-btn" data-tag="개인용">👤 개인용</button>
-          <button class="filter-btn pf-tag-btn" data-tag="업무용">💼 업무용</button>
-          <button class="filter-btn pf-tag-btn" data-tag="마케팅">📣 마케팅</button>
-          <button class="filter-btn pf-tag-btn" data-tag="자동화">⚡ 자동화</button>
-          <button class="filter-btn pf-tag-btn" data-tag="SaaS">☁️ SaaS</button>
-          <button class="filter-btn pf-tag-btn" data-tag="Telegram">✈️ Telegram</button>
-          <button class="filter-btn pf-tag-btn" data-tag="Discord">🎮 Discord</button>
-          <button class="filter-btn pf-tag-btn" data-tag="KakaoTalk">💛 KakaoTalk</button>
-          <button class="filter-btn pf-tag-btn" data-tag="결제">💳 결제</button>
-          <button class="filter-btn pf-tag-btn" data-tag="API 연동">🔗 API 연동</button>
-          <button class="filter-btn pf-tag-btn" data-tag="Webhook">🪝 Webhook</button>
-          <button class="filter-btn pf-tag-btn" data-tag="라이선스">🔑 라이선스</button>
-          <button class="filter-btn pf-tag-btn" data-tag="랜딩페이지">🚀 랜딩페이지</button>
-          <button class="filter-btn pf-tag-btn" data-tag="홈페이지">🌐 홈페이지</button>
-          <button class="filter-btn pf-tag-btn" data-tag="디자인">🎨 디자인</button>
-          <button class="filter-btn pf-tag-btn" data-tag="기타">📌 기타</button>
-        </div>
+
       </div>
 
       <div class="portfolio-grid" id="portfolioGrid"></div>
@@ -274,7 +368,47 @@
 
   <div class="section-glow-line"></div>
 
-  <!-- ── Contact ── -->
+  <!-- ── Project List ── -->
+  <section id="projectList" class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Project List</span>
+        <h2>프로젝트 목록</h2>
+        <p>지금까지 완료된 프로젝트 현황입니다.</p>
+      </div>
+      <div class="pj-stats-row">
+        <div class="pj-stat-box">
+          <div class="pj-stat-num" id="pjTotalCount">0</div>
+          <div class="pj-stat-lbl">전체 프로젝트</div>
+        </div>
+        <div class="pj-stat-box">
+          <div class="pj-stat-num" id="pjDoneCount">0</div>
+          <div class="pj-stat-lbl">완료 프로젝트</div>
+        </div>
+        <div class="pj-stat-box">
+          <div class="pj-stat-num" id="pjIngCount">0</div>
+          <div class="pj-stat-lbl">진행 중</div>
+        </div>
+      </div>
+      <div class="pj-table-wrap">
+        <table class="pj-table">
+          <thead>
+            <tr>
+              <th style="width:160px;">성함/회사명</th>
+              <th style="width:80px;text-align:center;">플랫폼</th>
+              <th>프로젝트명</th>
+              <th style="width:90px;text-align:center;">진행</th>
+            </tr>
+          </thead>
+          <tbody id="pjTableBody">
+            <tr><td colspan="4" style="text-align:center;padding:32px;color:var(--text3);">등록된 프로젝트가 없습니다.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+
   <section id="contact" class="section">
     <div class="container">
       <div class="section-head">
@@ -290,16 +424,21 @@
           <p>챗봇 개발, 마케팅 자동화, 홈페이지 및 랜딩페이지 제작까지 다양한 디지털 솔루션을 제공합니다. 아이디어가 있다면 편하게 연락해 주세요.</p>
           <div class="contact-detail-list">
             <div class="contact-detail">
-              <div class="contact-detail-icon">✈️</div>
-              <div><div class="cd-title">Telegram</div><div class="cd-sub">빠른 답변 가능</div></div>
+              <div class="contact-detail-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="#29B6F6"/><path d="M5.17 11.67l12.3-4.74c.57-.21 1.07.14.88.99l-2.09 9.84c-.16.71-.57.88-1.15.55l-3.2-2.36-1.54 1.49c-.17.17-.32.31-.65.31l.23-3.28 5.98-5.4c.26-.23-.06-.36-.4-.13L7.09 13.6 3.94 12.6c-.69-.22-.7-.69.38-1.03z" fill="white"/></svg>
+              </div>
+              <div>
+                <div class="cd-title">Telegram · 빠른 답변 가능</div>
+                <div class="cd-sub"><a href="https://t.me/marketingmixkorea" target="_blank" rel="noopener" style="color:var(--aurora-1);text-decoration:none;font-weight:600;">@marketingmixkorea</a></div>
+              </div>
             </div>
             <div class="contact-detail">
-              <div class="contact-detail-icon">⏱</div>
-              <div><div class="cd-title">평균 응답 시간</div><div class="cd-sub">24시간 이내</div></div>
+              <div class="contact-detail-icon">🕐</div>
+              <div><div class="cd-title">평균 응답 시간</div><div class="cd-sub">~3일 이내</div></div>
             </div>
             <div class="contact-detail">
-              <div class="contact-detail-icon">🌏</div>
-              <div><div class="cd-title">작업 범위</div><div class="cd-sub">원격 작업 가능 · 전국 어디서든</div></div>
+              <div class="contact-detail-icon">🧾</div>
+              <div><div class="cd-title">세금계산서 / 현금영수증</div><div class="cd-sub">상황에 따라 발행 불가</div></div>
             </div>
           </div>
         </div>
@@ -505,32 +644,117 @@
 
     <div id="adminPanel" style="display:none;">
       <div class="admin-header">
-        <h2 style="font-size:1.6rem;font-weight:900;color:var(--text);">📊 문의 관리</h2>
+        <h2 style="font-size:1.6rem;font-weight:900;color:var(--text);">📊 관리자 패널</h2>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-outline btn-sm" onclick="loadAdminInquiries()">🔄 새로고침</button>
-          <button class="btn btn-sm" style="background:rgba(255,80,80,0.1);color:#ff6b6b;border:1px solid rgba(255,80,80,0.2);" onclick="if(confirm('전체 삭제하시겠습니까?')){localStorage.removeItem('mm_inquiries');loadAdminInquiries();}">전체 삭제</button>
           <button class="btn btn-outline btn-sm" onclick="goPage('mainPage')">← 메인</button>
         </div>
       </div>
 
-      <div class="admin-stat-row">
-        <div class="admin-stat"><div class="num" id="adminTotal">0</div><div class="lbl">전체 문의</div></div>
-        <div class="admin-stat"><div class="num" id="adminNew" style="">0</div><div class="lbl">신규 문의</div></div>
+      <!-- 탭 -->
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" onclick="switchAdminTab('inquiry',this)">💬 문의 관리</button>
+        <button class="admin-tab-btn" onclick="switchAdminTab('projects',this)">📋 프로젝트 목록</button>
       </div>
-      <p class="admin-refresh">💡 30초마다 자동 갱신됩니다.</p>
 
-      <div class="admin-table-wrap table-scroll">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th><th>상태</th><th>성함/회사명</th><th>연락처</th><th>이메일</th>
-              <th>메신저/ID</th><th>문의 유형</th><th>예산</th><th>납기</th>
-              <th>문의 내용</th><th>접수 시간</th><th>IP</th><th>관리</th>
-            </tr>
-          </thead>
-          <tbody id="adminTableBody"></tbody>
-        </table>
+      <!-- 문의 관리 탭 -->
+      <div id="adminTabInquiry">
+        <div class="admin-stat-row">
+          <div class="admin-stat"><div class="num" id="adminTotal">0</div><div class="lbl">전체 문의</div></div>
+          <div class="admin-stat"><div class="num" id="adminNew">0</div><div class="lbl">신규 문의</div></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <button class="btn btn-outline btn-sm" onclick="loadAdminInquiries()">🔄 새로고침</button>
+          <button class="btn btn-sm" style="background:rgba(255,80,80,0.1);color:#ff6b6b;border:1px solid rgba(255,80,80,0.2);" onclick="if(confirm('전체 삭제하시겠습니까?')){localStorage.removeItem('mm_inquiries');loadAdminInquiries();}">전체 삭제</button>
+        </div>
+        <p class="admin-refresh">💡 30초마다 자동 갱신됩니다.</p>
+        <div class="admin-table-wrap table-scroll">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th><th>상태</th><th>성함/회사명</th><th>연락처</th><th>이메일</th>
+                <th>메신저/ID</th><th>문의 유형</th><th>예산</th><th>납기</th>
+                <th>문의 내용</th><th>접수 시간</th><th>IP</th><th>관리</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody"></tbody>
+          </table>
+        </div>
       </div>
+
+      <!-- 프로젝트 목록 관리 탭 -->
+      <div id="adminTabProjects" style="display:none;">
+        <div class="admin-stat-row">
+          <div class="admin-stat">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="num" id="adminPjTotal">0</div>
+              <button class="btn btn-sm btn-outline" style="font-size:0.7rem;padding:3px 10px;" onclick="editTotalProjects()">수정</button>
+            </div>
+            <div class="lbl">누적 프로젝트 수</div>
+          </div>
+          <div class="admin-stat"><div class="num" id="adminPjDone">0</div><div class="lbl">완료</div></div>
+          <div class="admin-stat"><div class="num" id="adminPjIng">0</div><div class="lbl">진행 중</div></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:20px;">
+          <button class="btn btn-primary btn-sm" onclick="openPjForm()">+ 프로젝트 추가</button>
+          <button class="btn btn-outline btn-sm" onclick="loadAdminProjects()">🔄 새로고침</button>
+        </div>
+
+        <!-- 추가/수정 폼 -->
+        <div id="pjForm" style="display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px;margin-bottom:24px;">
+          <h4 style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:16px;" id="pjFormTitle">프로젝트 추가</h4>
+          <input type="hidden" id="pjEditId" value="">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group">
+              <label class="form-label">성함/회사명 <span class="req">*</span></label>
+              <input id="pj_name" type="text" class="form-control" placeholder="홍길동 / (주)마케팅믹스">
+            </div>
+            <div class="form-group">
+              <label class="form-label">플랫폼 <span class="req">*</span></label>
+              <select id="pj_platform" class="form-control">
+                <option value="program">💻 프로그램</option>
+                <option value="naver">🟢 네이버</option>
+                <option value="google">🔵 구글</option>
+                <option value="instagram">📸 인스타그램</option>
+                <option value="facebook">👤 페이스북</option>
+                <option value="discord">🎮 디스코드</option>
+                <option value="slack">💬 슬랙</option>
+                <option value="email">📧 이메일</option>
+                <option value="phone">📱 번호</option>
+                <option value="website">🌐 홈페이지</option>
+                <option value="etc">📌 기타</option>
+              </select>
+            </div>
+            <div class="form-group" style="grid-column:1/-1;">
+              <label class="form-label">프로젝트명 <span class="req">*</span></label>
+              <input id="pj_title" type="text" class="form-control" placeholder="프로젝트명을 입력하세요">
+            </div>
+            <div class="form-group">
+              <label class="form-label">진행 상태 <span class="req">*</span></label>
+              <select id="pj_status" class="form-control">
+                <option value="접수">접수</option>
+                <option value="대기 중">대기 중</option>
+                <option value="진행 중">진행 중</option>
+                <option value="보류 중">보류 중</option>
+                <option value="완료">완료</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:16px;">
+            <button class="btn btn-primary btn-sm" onclick="savePjItem()">저장</button>
+            <button class="btn btn-outline btn-sm" onclick="closePjForm()">취소</button>
+          </div>
+        </div>
+
+        <div class="admin-table-wrap table-scroll">
+          <table class="admin-table">
+            <thead>
+              <tr><th>성함/회사명</th><th style="text-align:center;">플랫폼</th><th>프로젝트명</th><th style="text-align:center;">진행</th><th>관리</th></tr>
+            </thead>
+            <tbody id="adminPjBody"></tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -556,6 +780,18 @@
     <div class="modal-body"></div>
   </div>
 </div>
+
+<!-- Portfolio Purchase Modal -->
+<div class="modal-overlay" id="buyModal" onclick="if(event.target===this)closeBuyModal()">
+  <div class="modal-box" style="position:relative;max-width:520px;">
+    <button class="modal-close" onclick="closeBuyModal()">✕</button>
+    <div class="modal-body" id="buyModalBody"></div>
+  </div>
+</div>
+
+
+
+
 
 
 <!-- ── Scripts ── -->
