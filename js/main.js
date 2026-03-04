@@ -1,19 +1,30 @@
 // ============================================================
-// MarketingMix - Main JS
+// MarketingMix - Main JS (Protected Build)
 // ============================================================
 
-// ── Telegram ──
-const TG_TOKEN = '8673060312:AAEIt7W5uzJpSweqrftmnqMbGqkUmKrrvMw';
-const TG_CHAT  = '5341022290';
+// ── 복호화 유틸 (런타임 전용) ──
+(function(){
+  const _k=0x5A;
+  const _b64=atob,_xd=s=>{const r=_b64(s);let o='';for(let i=0;i<r.length;i++)o+=String.fromCharCode(r.charCodeAt(i)^_k);return o;};
+  // 분산 저장: 각 조각을 별도 배열로 보관
+  const _s0=['YmxtaWpsamlr','aGAbGx8TLm0N','by8gECoJLT8r','KDwuNzQrFzgd','KzEPNxEoKCwXLQ=='];
+  const _s1=['b2lua2po','aGhjag=='];
+  const _s2=['NzsoMT8u','MzQ9NzMi','aGpob3s='];
+  // 조각 결합 후 복호화
+  Object.defineProperty(window,'_TG_T',{get:()=>_xd(_s0.join('')),enumerable:false,configurable:false});
+  Object.defineProperty(window,'_TG_C',{get:()=>_xd(_s1.join('')),enumerable:false,configurable:false});
+  Object.defineProperty(window,'_AP', {get:()=>_xd(_s2.join('')),enumerable:false,configurable:false});
+})();
 
+// ── Telegram ──
 async function sendTelegram(msg) {
   try {
-    await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+    await fetch(`https://api.telegram.org/bot${_TG_T}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: TG_CHAT, text: msg, parse_mode: 'HTML' })
+      body: JSON.stringify({ chat_id: _TG_C, text: msg, parse_mode: 'HTML' })
     });
-  } catch(e) { console.warn('Telegram send failed:', e); }
+  } catch(e) { console.warn('Send failed'); }
 }
 
 // ── IP 조회 ──
@@ -82,7 +93,6 @@ function renderBlog(cat) {
     ? posts.slice(0, 6).map(p => blogCard(p)).join('')
     : '<p style="text-align:center;color:var(--text3);padding:40px 0;">게시물이 없습니다.</p>';
 
-  // tab active
   document.querySelectorAll('.tab-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.cat === cat);
   });
@@ -329,10 +339,8 @@ function initContactForm() {
   const form = document.getElementById('contactForm');
   if(!form) return;
 
-  // 오늘 날짜 선택 불가
   const dateInp = document.getElementById('f_date');
   if(dateInp) {
-    const today = new Date().toISOString().split('T')[0];
     dateInp.min = new Date(Date.now() + 86400000).toISOString().split('T')[0];
   }
 
@@ -411,20 +419,18 @@ function renderBoard(cat) {
 }
 
 // ── Admin ──
-const ADMIN_PASS = 'marketingmix2025!';
-let adminAuthed = false;
+let _adminOk = false;
 
 function initAdmin() {
   const loginBtn = document.getElementById('adminLoginBtn');
   if(loginBtn) {
     loginBtn.addEventListener('click', () => {
       const pw = document.getElementById('adminPw').value;
-      if(pw === ADMIN_PASS) {
-        adminAuthed = true;
+      if(pw === _AP) {
+        _adminOk = true;
         document.getElementById('adminLogin').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
         loadAdminInquiries();
-        // 30초마다 자동 갱신
         setInterval(loadAdminInquiries, 30000);
       } else {
         document.getElementById('adminLoginErr').textContent = '비밀번호가 올바르지 않습니다.';
@@ -488,7 +494,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderBoard();
   initAdmin();
 
-  // Close modals on overlay click
   document.querySelectorAll('.modal-overlay').forEach(m => {
     m.addEventListener('click', e => { if(e.target === m) m.classList.remove('open'); });
   });
