@@ -59,35 +59,131 @@
       border-radius:100px; backdrop-filter:blur(8px);
     }
 
-    /* ── 블로그 포스트 모달 ── */
-    .blog-post-content { padding: 28px 32px 32px; }
-    .blog-post-meta-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    /* ── 블로그 포스트 모달 (장문용) ── */
+    #blogModal .modal-box.blog-post-modal {
+      max-width: 760px;
+      width: 92vw;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      overflow: hidden;
+    }
+    .blog-post-scroll {
+      overflow-y: auto;
+      flex: 1;
+      scroll-behavior: smooth;
+    }
+    .blog-post-scroll::-webkit-scrollbar { width: 5px; }
+    .blog-post-scroll::-webkit-scrollbar-track { background: transparent; }
+    .blog-post-scroll::-webkit-scrollbar-thumb { background: rgba(0,245,200,0.25); border-radius: 10px; }
+
+    /* 히어로 이미지 */
+    .blog-post-hero-img {
+      width: 100%; height: 300px; object-fit: cover;
+      display: block; flex-shrink: 0;
+    }
+    /* 카테고리별 상단 컬러 바 */
+    .blog-post-color-bar {
+      height: 4px;
+      background: linear-gradient(90deg, var(--post-color, #00f5c8), transparent);
+    }
+
+    /* 포스트 본문 영역 */
+    .blog-post-content {
+      padding: 36px 40px 48px;
+    }
+    @media(max-width:600px){ .blog-post-content { padding: 24px 20px 36px; } }
+
+    /* 메타 행 */
+    .blog-post-meta-row {
+      display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap; margin-bottom: 20px;
+    }
     .blog-post-cat {
-      font-size:0.7rem; font-weight:700; padding:3px 10px; border-radius:100px;
+      font-size: 0.7rem; font-weight: 800; padding: 4px 12px;
+      border-radius: 100px; letter-spacing: 0.3px;
     }
     .blog-post-date, .blog-post-views {
-      font-size:0.75rem; color:var(--text3);
+      font-size: 0.78rem; color: var(--text3);
     }
+
+    /* 제목 */
     .blog-post-title {
-      font-size:1.45rem; font-weight:900; color:var(--text);
-      line-height:1.4; margin-bottom:16px;
+      font-size: 1.65rem; font-weight: 900; color: var(--text);
+      line-height: 1.35; margin: 0 0 20px;
+      word-break: keep-all;
     }
+    @media(max-width:600px){ .blog-post-title { font-size: 1.3rem; } }
+
+    /* 구분선 */
     .blog-post-divider {
-      height:1px; background:linear-gradient(90deg,var(--aurora-1),var(--aurora-2),transparent);
-      opacity:0.25; margin-bottom:22px;
+      height: 1px; margin-bottom: 28px;
+      background: linear-gradient(90deg, var(--post-color, #00f5c8) 0%, rgba(123,111,239,0.4) 50%, transparent 100%);
+      opacity: 0.3;
     }
+
+    /* 본문 타이포그래피 */
     .blog-post-body {
-      font-size:0.92rem; line-height:1.9; color:var(--text2);
+      font-size: 0.97rem;
+      line-height: 2.0;
+      color: var(--text2);
+      word-break: keep-all;
     }
-    .blog-post-body p { margin-bottom:1.1em; }
-    .blog-post-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.07); }
+    .blog-post-body p {
+      margin: 0 0 1.4em;
+    }
+    .blog-post-body h2 {
+      font-size: 1.25rem; font-weight: 800; color: var(--text);
+      margin: 2em 0 0.7em; padding-bottom: 0.4em;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .blog-post-body h3 {
+      font-size: 1.05rem; font-weight: 700; color: var(--text);
+      margin: 1.6em 0 0.5em;
+    }
+    .blog-post-body ul, .blog-post-body ol {
+      padding-left: 1.5em; margin: 0 0 1.4em;
+    }
+    .blog-post-body li { margin-bottom: 0.5em; }
+    .blog-post-body strong { color: var(--text); font-weight: 700; }
+    .blog-post-body em { color: var(--aurora-1); font-style: normal; font-weight: 600; }
+    .blog-post-body code {
+      background: rgba(0,245,200,0.08); color: var(--aurora-1);
+      padding: 2px 7px; border-radius: 5px; font-size: 0.88em;
+      border: 1px solid rgba(0,245,200,0.15);
+    }
+    .blog-post-body blockquote {
+      border-left: 3px solid var(--aurora-1);
+      margin: 1.5em 0; padding: 12px 20px;
+      background: rgba(0,245,200,0.04); border-radius: 0 8px 8px 0;
+      color: var(--text2); font-style: italic;
+    }
+    .blog-post-body hr {
+      border: none; border-top: 1px solid rgba(255,255,255,0.08);
+      margin: 2em 0;
+    }
+    /* 콜아웃 박스 (카테고리별) */
+    .blog-callout {
+      padding: 16px 20px; border-radius: 12px; margin: 1.5em 0;
+      border-left: 4px solid var(--post-color, #00f5c8);
+      background: rgba(0,245,200,0.05);
+      font-size: 0.9rem; color: var(--text2);
+    }
+
+    /* 태그 */
+    .blog-post-tags {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 32px; padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
     .blog-tag-chip {
-      font-size:0.75rem; padding:4px 12px; border-radius:100px;
-      background:rgba(255,255,255,0.05); color:var(--text3);
-      border:1px solid rgba(255,255,255,0.1);
+      font-size: 0.75rem; padding: 5px 14px; border-radius: 100px;
+      background: rgba(255,255,255,0.05); color: var(--text3);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.2s;
     }
-    /* 블로그 모달 넓게 */
-    #blogModal .modal-box { max-width: 680px; }
+    .blog-tag-chip:hover { background: rgba(0,245,200,0.08); color: var(--aurora-1); border-color: rgba(0,245,200,0.2); }
 
     /* ── 포트폴리오 메타 박스 ── */
     .pf-meta-item-box {
@@ -98,8 +194,38 @@
     .pf-meta-item-lbl { font-size:0.68rem; color:var(--text3); margin-bottom:4px; }
     .pf-meta-item-val { font-size:0.85rem; font-weight:600; color:var(--text); }
 
-    /* 구매 불가 메시지 */
-    .not-available-msg {
+    /* ── 구매 문의 모달 스크롤 ── */
+    #buyModal .modal-box {
+      max-width: 520px;
+      max-height: 88vh;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,245,200,0.25) transparent;
+    }
+    #buyModal .modal-box::-webkit-scrollbar { width: 5px; }
+    #buyModal .modal-box::-webkit-scrollbar-thumb { background: rgba(0,245,200,0.25); border-radius:10px; }
+
+    /* 태그 체크박스 그리드 */
+    .buy-tag-grid {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+    }
+    .buy-tag-item {
+      display: flex; align-items: center; gap: 6px;
+      cursor: pointer; user-select: none;
+    }
+    .buy-tag-item input[type="checkbox"] {
+      accent-color: var(--aurora-1);
+      width: 15px; height: 15px; cursor: pointer;
+    }
+    .buy-tag-label {
+      font-size: 0.82rem; color: var(--text2);
+      transition: color 0.2s;
+    }
+    .buy-tag-item:hover .buy-tag-label { color: var(--text); }
       text-align:center; padding:14px 20px;
       background:rgba(239,68,68,0.08); color:#ef4444;
       border:1px solid rgba(239,68,68,0.2); border-radius:12px;
@@ -346,9 +472,8 @@
       </div>
 
       <!-- 카테고리 필터 -->
-      <div class="portfolio-controls">
-        <div class="filter-group">
-          <span class="filter-label">카테고리</span>
+      <div class="portfolio-controls" style="justify-content:center;">
+        <div class="filter-group" style="justify-content:center;flex-wrap:wrap;">
           <button class="filter-btn pf-cat-btn active" data-cat="전체">전체</button>
           <button class="filter-btn pf-cat-btn" data-cat="개인용">👤 개인용</button>
           <button class="filter-btn pf-cat-btn" data-cat="업무용">💼 업무용</button>
@@ -359,7 +484,6 @@
           <button class="filter-btn pf-cat-btn" data-cat="랜딩페이지">🚀 랜딩페이지</button>
           <button class="filter-btn pf-cat-btn" data-cat="기타">📌 기타</button>
         </div>
-
       </div>
 
       <div class="portfolio-grid" id="portfolioGrid"></div>
@@ -767,9 +891,9 @@
 
 <!-- Blog Modal -->
 <div class="modal-overlay" id="blogModal" onclick="if(event.target===this)closeBlogModal()">
-  <div class="modal-box" style="position:relative;">
+  <div class="modal-box blog-post-modal" style="position:relative;">
     <button class="modal-close" onclick="closeBlogModal()">✕</button>
-    <div class="modal-body"></div>
+    <div class="modal-body blog-post-scroll"></div>
   </div>
 </div>
 
