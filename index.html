@@ -587,7 +587,6 @@
             <span class="pj-col-title">문의 목록</span>
             <span class="pj-col-count" id="inqTotalCount">0</span>
           </div>
-          <div class="pj-col-sub" id="inqTotalSub"></div>
           <div class="pj-table-wrap" style="margin-top:12px;">
             <table class="pj-table">
               <thead>
@@ -610,48 +609,21 @@
             <span class="pj-col-icon">📋</span>
             <span class="pj-col-title">프로젝트 목록</span>
           </div>
-          <!-- 미니 통계 (클릭 편집) -->
+          <!-- 미니 통계 (읽기 전용 — 수정은 관리자 페이지에서만) -->
           <div class="pj-mini-stats">
-            <div class="pj-mini-stat pj-stat-editable" onclick="startEditStat('total')" title="클릭하여 수정">
-              <div id="pjTotalInput" style="display:none;" onclick="event.stopPropagation()">
-                <input type="number" id="pjTotalVal" min="0"
-                  style="width:50px;font-size:0.9rem;font-weight:900;text-align:center;background:transparent;border:none;border-bottom:2px solid var(--aurora-1);color:var(--aurora-1);outline:none;"
-                  onkeydown="if(event.key==='Enter')saveEditStat('total');if(event.key==='Escape')cancelEditStat('total');">
-                <div style="display:flex;gap:3px;justify-content:center;margin-top:3px;">
-                  <button class="pj-stat-ok" style="padding:1px 6px;font-size:0.7rem;" onclick="saveEditStat('total')">✓</button>
-                  <button class="pj-stat-cancel" style="padding:1px 6px;font-size:0.7rem;" onclick="cancelEditStat('total')">✕</button>
-                </div>
-              </div>
+            <div class="pj-mini-stat">
               <span class="pj-mini-num" id="pjTotalCount">0</span>
-              <span class="pj-mini-lbl">전체 ✏️</span>
+              <span class="pj-mini-lbl">전체</span>
             </div>
             <span class="pj-mini-sep">·</span>
-            <div class="pj-mini-stat pj-stat-editable" onclick="startEditStat('done')" title="클릭하여 수정">
-              <div id="pjDoneInput" style="display:none;" onclick="event.stopPropagation()">
-                <input type="number" id="pjDoneVal" min="0"
-                  style="width:50px;font-size:0.9rem;font-weight:900;text-align:center;background:transparent;border:none;border-bottom:2px solid #10b981;color:#10b981;outline:none;"
-                  onkeydown="if(event.key==='Enter')saveEditStat('done');if(event.key==='Escape')cancelEditStat('done');">
-                <div style="display:flex;gap:3px;justify-content:center;margin-top:3px;">
-                  <button class="pj-stat-ok" style="padding:1px 6px;font-size:0.7rem;" onclick="saveEditStat('done')">✓</button>
-                  <button class="pj-stat-cancel" style="padding:1px 6px;font-size:0.7rem;" onclick="cancelEditStat('done')">✕</button>
-                </div>
-              </div>
+            <div class="pj-mini-stat">
               <span class="pj-mini-num" id="pjDoneCount" style="color:#10b981;">0</span>
-              <span class="pj-mini-lbl">완료 ✏️</span>
+              <span class="pj-mini-lbl">완료</span>
             </div>
             <span class="pj-mini-sep">·</span>
-            <div class="pj-mini-stat pj-stat-editable" onclick="startEditStat('ing')" title="클릭하여 수정">
-              <div id="pjIngInput" style="display:none;" onclick="event.stopPropagation()">
-                <input type="number" id="pjIngVal" min="0"
-                  style="width:50px;font-size:0.9rem;font-weight:900;text-align:center;background:transparent;border:none;border-bottom:2px solid #0ea5e9;color:#0ea5e9;outline:none;"
-                  onkeydown="if(event.key==='Enter')saveEditStat('ing');if(event.key==='Escape')cancelEditStat('ing');">
-                <div style="display:flex;gap:3px;justify-content:center;margin-top:3px;">
-                  <button class="pj-stat-ok" style="padding:1px 6px;font-size:0.7rem;" onclick="saveEditStat('ing')">✓</button>
-                  <button class="pj-stat-cancel" style="padding:1px 6px;font-size:0.7rem;" onclick="cancelEditStat('ing')">✕</button>
-                </div>
-              </div>
+            <div class="pj-mini-stat">
               <span class="pj-mini-num" id="pjIngCount" style="color:#0ea5e9;">0</span>
-              <span class="pj-mini-lbl">진행 중 ✏️</span>
+              <span class="pj-mini-lbl">진행 중</span>
             </div>
           </div>
           <div class="pj-table-wrap" style="margin-top:12px;">
