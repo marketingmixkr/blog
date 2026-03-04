@@ -554,7 +554,7 @@ async function submitBuyForm() {
 
   const kstNow = nowKST();
   const tgMsg =
-`[ Github - MarketingMix. ]
+`**[ Github - MarketingMix. ]**
 구매 문의 드립니다.
 
 👤 성함/회사명 : ${name}
@@ -562,14 +562,14 @@ async function submitBuyForm() {
 📧 이메일 : ${email}
 💬 메신저 : ${msn} / 메신저 ID : ${msnId}
 
-📌 프로젝트명 : ${projName}
+📌 프로젝트명 : **${projName}**
 📋 문의 유형 : ${tagStr}
-💰 구매 금액 : ${price}
+💰 구매 금액 : **${price}**
 
 💬 문의 내용 :
 ${content || '(없음)'}
 
-🕒 문의 시간 : ${kstNow} (UTC+9 기준)
+🕒 문의 시간 : ${kstNow}
 🌐 IP 주소 : ${userIP}`;
 
   await sendTelegram(tgMsg);
@@ -780,20 +780,21 @@ function initContactForm() {
     const dday     = dueDate !== '미정' ? ` (${calcDDay(dueDate)})` : '';
     const kstNow   = nowKST();
 
-    const tgMsg = `[ Github - MarketingMix. ]
+    const tgMsg = `**[ Github - MarketingMix. ]**
+    
 👤 성함/회사명 : ${name}
 📱 연락처 : ${phone}
 📧 이메일 : ${email}
 💬 메신저 : ${messenger} / 메신저 ID : ${messId}
 
 📋 문의 유형 : ${type}
-💰 예산 범위 : ${budget}
-⏰ 희망 납기 : ${dueDate}${dday}
+💰 예산 범위 : **${budget}**
+⏰ 희망 납기 : **${dueDate}** ${dday}
 
 💬 문의 내용 :
 ${content}
 
-🕒 문의 시간 : ${kstNow} (UTC+9 기준)
+🕒 문의 시간 : ${kstNow}
 🌐 IP 주소 : ${userIP}`;
 
     await sendTelegram(tgMsg);
