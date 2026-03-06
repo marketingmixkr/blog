@@ -762,6 +762,7 @@ function calcInqStats() {
 function renderProjectList() {
   const tbody = document.getElementById('pjTableBody');
   if(!tbody) return;
+  // DB.init() 후 localStorage에 동기화된 데이터를 읽음
   const list   = (() => { try { return JSON.parse(localStorage.getItem('mm_projects') || '[]'); } catch { return []; } })();
   const recent = list.slice(0, 10);
   const s      = calcStats();
