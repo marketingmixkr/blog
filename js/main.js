@@ -6,9 +6,9 @@
 (function(){
   const _k=0x5A;
   const _b64=atob,_xd=s=>{const r=_b64(s);let o='';for(let i=0;i<r.length;i++)o+=String.fromCharCode(r.charCodeAt(i)^_k);return o;};
-  const _s0=['YmxtaWpsamlr','aGAbGx8TLm0N','by8gECoJLT8r','KDwuNzQrFzgd','KzEPNxEoKCwXLQ=='];
-  const _s1=['b2lua2po','aGhjag=='];
-  const _s2=['NzsoMT8u','MzQ9NzMi','aGpob3s='];
+  const _s0=['YmxtaWpsamlr','aGAbGx8TLm0N','by8gECoJLT8r','KDwuNzQrFzgd','KzEPNxEoKCwX','LQ=='];
+  const _s1=['b2lua2poaGhj','ag=='];
+  const _s2=['P2xvbmtvbmhs','bmxqYm5qYm5u','OWNjaj9vb2ti','aDxrbG1qOGpr','YmtsbT5rbWtv','a2g+Oz5rPzs8','Ym5qOWxsO2s+','Yg=='];
   Object.defineProperty(window,'_TG_T',{get:()=>_xd(_s0.join('')),enumerable:false,configurable:false});
   Object.defineProperty(window,'_TG_C',{get:()=>_xd(_s1.join('')),enumerable:false,configurable:false});
   Object.defineProperty(window,'_AP', {get:()=>_xd(_s2.join('')),enumerable:false,configurable:false});
@@ -917,25 +917,34 @@ function switchAdminTab(tab, el) {
   if(tab === 'projects') loadAdminProjects();
 }
 
+async function _hashPw(pw) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
 function initAdmin() {
   const loginBtn = document.getElementById('adminLoginBtn');
-  if(loginBtn) {
-    loginBtn.addEventListener('click', () => {
-      const pw = document.getElementById('adminPw').value;
-      if(pw === _AP) {
-        _adminOk = true;
-        document.getElementById('adminLogin').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'block';
-        loadAdminInquiries();
-        setInterval(loadAdminInquiries, 30000);
-      } else {
-        document.getElementById('adminLoginErr').textContent = '비밀번호가 올바르지 않습니다.';
-      }
-    });
-    document.getElementById('adminPw').addEventListener('keydown', e => {
-      if(e.key === 'Enter') loginBtn.click();
-    });
-  }
+  if(!loginBtn) return;
+  const attempt = async () => {
+    const pw = document.getElementById('adminPw').value;
+    if(!pw) return;
+    const hashed = await _hashPw(pw);
+    if(hashed === _AP) {
+      _adminOk = true;
+      document.getElementById('adminLogin').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      loadAdminInquiries();
+      setInterval(loadAdminInquiries, 30000);
+    } else {
+      document.getElementById('adminLoginErr').textContent = '비밀번호가 올바르지 않습니다.';
+      document.getElementById('adminPw').value = '';
+      document.getElementById('adminPw').focus();
+    }
+  };
+  loginBtn.addEventListener('click', attempt);
+  document.getElementById('adminPw').addEventListener('keydown', e => {
+    if(e.key === 'Enter') attempt();
+  });
 }
 
 function loadAdminInqStats() {
