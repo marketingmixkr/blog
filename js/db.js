@@ -12,10 +12,10 @@
 //   이 파일 상단에서만 설정하면 됩니다.
 // ============================================================
 
-const JSONBIN_KEY    = '$2a$10$bKjWCIiznXF1pJv7fJ/7UOqdE1r0CqVZBHrk.r5/KGjXXDRWHPtKm'; // X-Master-Key
-const BIN_INQUIRIES  = '68300d368960c979a5a9ba6c'; // 문의 bin ID
-const BIN_PROJECTS   = '68300d578960c979a5a9ba78'; // 프로젝트 bin ID
-const BIN_STATS      = '68300d6d8561e97a50f3ad85'; // 통계 bin ID
+const JSONBIN_KEY    = '$2a$10$B4Ugk1XpxS4ZTAjrOtNFT.0CDE7myTX8iD6y.PVEPbpRhTBW2KyA2'; 
+const BIN_INQUIRIES  = '69aab84a43b1c97be9b98784'; // 
+const BIN_PROJECTS   = '69aab835d0ea881f40f4f183'; // 
+const BIN_STATS      = '69aab84a43b1c97be9b98784'; //
 
 const JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
 
